@@ -1,0 +1,30 @@
+name: bus-alert
+on:
+  schedule:
+    # 11:30 UTC = 6:30 CDT, 12:30 UTC = 6:30 CST. The script itself enforces
+    # the 7:00-10:00 America/Chicago window and weekdays, so the wrong one just exits.
+    - cron: "30 11 * * 1-5"
+    - cron: "30 12 * * 1-5"
+  workflow_dispatch: {}
+concurrency:
+  group: bus-alert
+  cancel-in-progress: false
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python bus_alert.py
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          ROUTE_ID: ${{ secrets.ROUTE_ID }}
+          EARLY_STOP_ID: ${{ secrets.EARLY_STOP_ID }}
+          LEAVE_STOP_ID: ${{ secrets.LEAVE_STOP_ID }}
+          BOARD_STOP_ID: ${{ secrets.BOARD_STOP_ID }}
+          EARLY_LABEL: ${{ secrets.EARLY_LABEL }}
+          LEAVE_LABEL: ${{ secrets.LEAVE_LABEL }}
+          BOARD_LABEL: ${{ secrets.BOARD_LABEL }}
