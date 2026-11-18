@@ -5,7 +5,16 @@ on:
     # the 7:00-10:00 America/Chicago window and weekdays, so the wrong one just exits.
     - cron: "30 11 * * 1-5"
     - cron: "30 12 * * 1-5"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      window_start:
+        description: "Test window start, HH:MM Chicago (blank = 07:00)"
+        required: false
+        default: ""
+      window_end:
+        description: "Test window end, HH:MM Chicago (blank = 10:00)"
+        required: false
+        default: ""
 concurrency:
   group: bus-alert
   cancel-in-progress: false
@@ -28,3 +37,5 @@ jobs:
           EARLY_LABEL: ${{ secrets.EARLY_LABEL }}
           LEAVE_LABEL: ${{ secrets.LEAVE_LABEL }}
           BOARD_LABEL: ${{ secrets.BOARD_LABEL }}
+          WINDOW_START: ${{ inputs.window_start }}
+          WINDOW_END: ${{ inputs.window_end }}

@@ -33,8 +33,17 @@ EARLY_LABEL = os.environ.get("EARLY_LABEL") or "early stop"
 LEAVE_LABEL = os.environ.get("LEAVE_LABEL") or "trigger stop"
 BOARD_LABEL = os.environ.get("BOARD_LABEL") or "your stop"
 
-WINDOW_START = (7, 0)
-WINDOW_END = (10, 0)
+def _hm(name, default):
+    """Optional HH:MM override (America/Chicago), e.g. for a manual test run."""
+    v = os.environ.get(name)
+    if not v:
+        return default
+    h, m = v.split(":")
+    return int(h), int(m)
+
+
+WINDOW_START = _hm("WINDOW_START", (7, 0))
+WINDOW_END = _hm("WINDOW_END", (10, 0))
 POLL_SECONDS = 30
 MAX_ARRIVAL_AGE = timedelta(minutes=4)   # ignore older arrivals (restart, old laps)
 MAX_EARLY_WAIT = timedelta(minutes=60)   # how long before the window we are willing to sleep
